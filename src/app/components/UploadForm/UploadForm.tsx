@@ -6,7 +6,8 @@ import styles from './UploadForm.module.css';
 export default function UploadForm() {
   const [dragActive, setDragActive] = useState<boolean>(false);
   const [file, setFile] = useState<File | null>(null);
-  const [error, setError] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [fileError, setFileError] = useState<string>('');
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -16,11 +17,9 @@ export default function UploadForm() {
       e.stopPropagation();
     };
 
-    // Prevent drop on whole window
     window.addEventListener('dragover', preventDefaults);
     window.addEventListener('drop', preventDefaults);
 
-    // Cleanup on unmount
     return () => {
       window.removeEventListener('dragover', preventDefaults);
       window.removeEventListener('drop', preventDefaults);
@@ -45,10 +44,10 @@ export default function UploadForm() {
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const droppedFile = e.dataTransfer.files[0];
       if (droppedFile.name.endsWith('.xlsx') || droppedFile.name.endsWith('.xls')) {
-        setError('');
+        setFileError('');
         setFile(droppedFile);
       } else {
-        setError('Must be an excel file that ends with .xls or .xslx');
+        setFileError('Must be an excel file that ends with .xls or .xslx');
       }
     }
   }
@@ -63,11 +62,16 @@ export default function UploadForm() {
     e.preventDefault();
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
+      setFileError('');
     }
   }
 
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+  }
+
   return (
-    <form className={styles.form}>
+    <form onSubmit={handleSubmit} className={styles.form}>
       <div
         onClick={handleClick}
         onDragEnter={handleDrag}
@@ -102,9 +106,14 @@ export default function UploadForm() {
         >
           Browse Files
         </button>
-        <p>{error ? error : null}</p>
+        <p>{fileError ? fileError : null}</p>
+        {file ? <div className={styles.arrow}>↓↓↓</div> : null}
       </div>
-      <button className={`${styles.button}`}>Summerise + Download</button>
+      {file && !isLoading ? (
+        <button type='submit' className={`${styles.button}`}>
+          Summerise
+        </button>
+      ) : null}
     </form>
   );
 }
