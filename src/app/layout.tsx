@@ -19,8 +19,8 @@ const akkuratPro = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'Excel to Word Summariser',
-  description: 'Excel to Word Summariser',
+  title: 'Excel to Word AI Summariser',
+  description: 'Excel to Word AI Summariser',
 };
 
 export default function RootLayout({
