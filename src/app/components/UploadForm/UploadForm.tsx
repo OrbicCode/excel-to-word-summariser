@@ -1,13 +1,31 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import styles from './UploadForm.module.css';
 
 export default function UploadForm() {
   const [dragActive, setDragActive] = useState<boolean>(false);
   const [file, setFile] = useState<File | null>(null);
+  const [error, setError] = useState<string>('');
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const preventDefaults = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    // Prevent drop on whole window
+    window.addEventListener('dragover', preventDefaults);
+    window.addEventListener('drop', preventDefaults);
+
+    // Cleanup on unmount
+    return () => {
+      window.removeEventListener('dragover', preventDefaults);
+      window.removeEventListener('drop', preventDefaults);
+    };
+  }, []);
 
   function handleDrag(e: React.DragEvent) {
     e.preventDefault();
@@ -25,11 +43,21 @@ export default function UploadForm() {
 
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      console.log(e.dataTransfer.files[0]);
+      const droppedFile = e.dataTransfer.files[0];
+      if (droppedFile.name.endsWith('.xlsx') || droppedFile.name.endsWith('.xls')) {
+        setError('');
+        setFile(droppedFile);
+      } else {
+        setError('Must be an excel file that ends with .xls or .xslx');
+      }
     }
   }
 
-  function handleClick() {}
+  function handleClick() {
+    if (fileInputRef) {
+      fileInputRef.current?.click();
+    }
+  }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
@@ -41,6 +69,7 @@ export default function UploadForm() {
   return (
     <form className={styles.form}>
       <div
+        onClick={handleClick}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
@@ -50,6 +79,7 @@ export default function UploadForm() {
         <input
           ref={fileInputRef}
           type='file'
+          accept='.xlsx, .xls'
           onChange={handleFileChange}
           className={styles.inputHidden}
         />
@@ -72,6 +102,7 @@ export default function UploadForm() {
         >
           Browse Files
         </button>
+        <p>{error ? error : null}</p>
       </div>
       <button className={`${styles.button}`}>Summerise + Download</button>
     </form>
