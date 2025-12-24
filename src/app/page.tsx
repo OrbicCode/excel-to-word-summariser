@@ -1,15 +1,14 @@
 'use client';
 
+import UploadForm from './components/UploadForm/UploadForm';
 import styles from './page.module.css';
 
 export default function Home() {
   return (
     <main className={styles.main}>
-      <h1>Excel to Word Summariser</h1>
+      <h1>Excel to Word AI Summariser</h1>
       <div className={styles.formContainer}>
-        <form className={styles.form}>
-          <input type='file' />
-        </form>
+        <UploadForm />
       </div>
     </main>
   );
