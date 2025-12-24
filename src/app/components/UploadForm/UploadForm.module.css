@@ -62,3 +62,8 @@
 .browseBtnHidden {
   display: none;
 }
+
+.arrow {
+  font-size: 3rem;
+  color: var(--purple);
+}
