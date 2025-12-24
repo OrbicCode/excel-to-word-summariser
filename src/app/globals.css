@@ -2,14 +2,25 @@
   box-sizing: border-box;
 }
 
+:root {
+  --purple: #4a1d72;
+  --teal: #68c9d0;
+  --pink: #f6555e;
+  --grey: #dfdad8;
+}
+
 body {
   margin: 0;
   height: 100vh;
   font-family: var(--akkurat-pro);
   font-weight: 400;
-  color: white;
+  color: var(--purple);
 }
 
 h1 {
   margin: 0;
+}
+
+button {
+  cursor: pointer;
 }
