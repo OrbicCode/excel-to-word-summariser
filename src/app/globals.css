@@ -5,4 +5,11 @@
 body {
   margin: 0;
   height: 100vh;
+  font-family: var(--akkurat-pro);
+  font-weight: 400;
+  color: white;
+}
+
+h1 {
+  margin: 0;
 }
