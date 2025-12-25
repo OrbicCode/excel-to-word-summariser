@@ -72,12 +72,28 @@ export default function UploadForm() {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await fetch('/api/summerise', {
-      method: 'POST',
-      body: formData,
-    });
-
     try {
+      const response = await fetch('/api/summerise', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Error summerising document: ${errorData.error}`);
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download =
+        response.headers.get('Content-Disposition')?.split('filename=')[1] || 'summary.docx';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       setIsLoading(false);
       console.error(error);
