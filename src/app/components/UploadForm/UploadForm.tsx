@@ -77,11 +77,6 @@ export default function UploadForm() {
       body: formData,
     });
 
-    const data = await response.json();
-
-    const blob = await data.formData.blob();
-    console.log(blob);
-
     try {
     } catch (error) {
       setIsLoading(false);
