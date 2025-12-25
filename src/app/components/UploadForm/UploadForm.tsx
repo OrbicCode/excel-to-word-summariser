@@ -41,39 +41,60 @@ export default function UploadForm() {
     e.stopPropagation();
 
     setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+    if (e.dataTransfer?.files?.[0]) {
       const droppedFile = e.dataTransfer.files[0];
       if (droppedFile.name.endsWith('.xlsx') || droppedFile.name.endsWith('.xls')) {
         setFileError('');
         setFile(droppedFile);
       } else {
+        setFile(null);
         setFileError('Must be an excel file that ends with .xls or .xslx');
       }
     }
   }
 
-  function handleClick() {
-    if (fileInputRef) {
-      fileInputRef.current?.click();
-    }
-  }
-
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    e.preventDefault();
-    if (e.target.files && e.target.files[0]) {
+    if (e.target?.files?.[0]) {
       setFile(e.target.files[0]);
       setFileError('');
     }
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!file) {
+      return;
+    }
+
+    setIsLoading(true);
+    setFileError('');
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch('/api/summerise', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    const blob = await data.formData.blob();
+    console.log(blob);
+
+    try {
+    } catch (error) {
+      setIsLoading(false);
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
       <div
-        onClick={handleClick}
+        onClick={() => fileInputRef.current?.click()}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
@@ -98,6 +119,7 @@ export default function UploadForm() {
         )}
         <button
           type='button'
+          disabled={isLoading}
           onClick={(e) => {
             e.stopPropagation();
             fileInputRef.current?.click();
@@ -110,7 +132,7 @@ export default function UploadForm() {
         {file ? <div className={styles.arrow}>↓↓↓</div> : null}
       </div>
       {file && !isLoading ? (
-        <button type='submit' className={`${styles.button}`}>
+        <button type='submit' disabled={isLoading} className={`${styles.button}`}>
           Summerise
         </button>
       ) : null}
