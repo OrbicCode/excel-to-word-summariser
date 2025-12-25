@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
       status: 200,
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'Content-Disposition': `attachment; filename="job-spec-summary.docx"`,
+        'Content-Disposition': `attachment; filename=job-spec-summary.docx`,
       },
     });
   } catch (error) {
