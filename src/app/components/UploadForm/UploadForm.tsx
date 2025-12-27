@@ -140,7 +140,7 @@ export default function UploadForm() {
           Browse Files
         </button>
         <p>{fileError ? fileError : null}</p>
-        {file ? <div className={styles.arrow}>↓↓↓</div> : null}
+        {file && !dragActive ? <div className={styles.arrow}>↓↓↓</div> : null}
       </div>
       {file && !isLoading ? (
         <button type='submit' disabled={isLoading} className={`${styles.button}`}>
