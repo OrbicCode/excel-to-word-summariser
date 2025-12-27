@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <h1>
-        Prototype
+        Concept Prototype
         <br />
         Excel to Word AI Summariser
       </h1>
